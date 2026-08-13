@@ -380,18 +380,29 @@ fillSprinkleBand(document.getElementById('sprinkleBandTop'));
 fillSprinkleBand(document.getElementById('sprinkleBandBottom'));
 
 // copy account
-document.getElementById('copyBtn').addEventListener('click', async () => {
+document.getElementById('copyBtn').addEventListener('click', () => {
   const text = `${CONFIG.bank.name} ${CONFIG.bank.account} (${CONFIG.bank.holder})`;
-  try{
-    await navigator.clipboard.writeText(text);
-    const btn = document.getElementById('copyBtn');
-    const old = btn.textContent;
+  const temp = document.createElement('textarea');
+  temp.value = text;
+  temp.style.position = 'fixed';
+  temp.style.opacity = '0';
+  document.body.appendChild(temp);
+  temp.focus();
+  temp.select();
+  let copied = false;
+  try{ copied = document.execCommand('copy'); }catch(e){ copied = false; }
+  document.body.removeChild(temp);
+
+  const btn = document.getElementById('copyBtn');
+  const old = btn.textContent;
+  if(copied){
     btn.textContent = '복사 완료!';
-    setTimeout(()=> btn.textContent = old, 1500);
-  }catch(e){
+  }else{
     alert(text);
   }
+  setTimeout(()=> btn.textContent = old, 1500);
 });
+
 </script>
 </body>
 </html>
