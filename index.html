@@ -384,11 +384,19 @@ document.getElementById('copyBtn').addEventListener('click', () => {
   const text = `${CONFIG.bank.name} ${CONFIG.bank.account} (${CONFIG.bank.holder})`;
   const temp = document.createElement('textarea');
   temp.value = text;
-  temp.style.position = 'fixed';
-  temp.style.opacity = '0';
+  temp.setAttribute('readonly', '');
+  temp.style.position = 'absolute';
+  temp.style.left = '-9999px';
+  temp.style.fontSize = '16px';
   document.body.appendChild(temp);
-  temp.focus();
-  temp.select();
+
+  const range = document.createRange();
+  range.selectNodeContents(temp);
+  const selection = window.getSelection();
+  selection.removeAllRanges();
+  selection.addRange(range);
+  temp.setSelectionRange(0, 999999);
+
   let copied = false;
   try{ copied = document.execCommand('copy'); }catch(e){ copied = false; }
   document.body.removeChild(temp);
