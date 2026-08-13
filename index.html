@@ -278,10 +278,10 @@
   <div class="method">
     <div class="info">
       <div class="tag">계좌이체</div>
-      <div class="detail" id="bankDetail">신한 · 110546208263 · 지유경</div>
+      <div class="detail" id="bankDetail">은행 · 실제계좌번호 · 내이름</div>
     </div>
-    <button class="btn btn-copy" id="copyBtn">계좌 복사</button>
   </div>
+
 
   <div class="method">
     <div class="info">
@@ -380,36 +380,7 @@ fillSprinkleBand(document.getElementById('sprinkleBandTop'));
 fillSprinkleBand(document.getElementById('sprinkleBandBottom'));
 
 // copy account
-document.getElementById('copyBtn').addEventListener('click', () => {
-  const text = `${CONFIG.bank.name} ${CONFIG.bank.account} (${CONFIG.bank.holder})`;
-  const temp = document.createElement('textarea');
-  temp.value = text;
-  temp.setAttribute('readonly', '');
-  temp.style.position = 'absolute';
-  temp.style.left = '-9999px';
-  temp.style.fontSize = '16px';
-  document.body.appendChild(temp);
 
-  const range = document.createRange();
-  range.selectNodeContents(temp);
-  const selection = window.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
-  temp.setSelectionRange(0, 999999);
-
-  let copied = false;
-  try{ copied = document.execCommand('copy'); }catch(e){ copied = false; }
-  document.body.removeChild(temp);
-
-  const btn = document.getElementById('copyBtn');
-  const old = btn.textContent;
-  if(copied){
-    btn.textContent = '복사 완료!';
-  }else{
-    alert(text);
-  }
-  setTimeout(()=> btn.textContent = old, 1500);
-});
 
 
 </script>
