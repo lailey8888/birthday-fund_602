@@ -402,35 +402,6 @@ document.getElementById('footerNote').textContent = `${CONFIG.hostName}의 생�
 
 // countdown
 function renderCountdown(){
-  // achievement progress (manual number, edit CONFIG.currentAmount to update)
-function formatWon(n){ return Number(n).toLocaleString('ko-KR'); }
-
-function renderCandles(pct){
-  const g = document.getElementById('candles');
-  g.innerHTML = '';
-  const lit = Math.round((pct/100) * 5);
-  const startX = 90;
-  for(let i=0;i<5;i++){
-    const x = startX + i*22;
-    const isLit = i < lit;
-    g.innerHTML += `
-      <rect x="${x}" y="70" width="6" height="26" rx="2" fill="#FFFFFF"/>
-      <ellipse class="flame ${isLit ? '' : 'off'}" cx="${x+3}" cy="66" rx="5" ry="8" fill="${isLit ? '#5B9FD6' : '#B9CBD3'}"/>
-      <ellipse cx="${x+3}" cy="68" rx="2.4" ry="4" fill="${isLit ? '#5FCFC0' : 'transparent'}"/>
-    `;
-  }
-}
-
-function renderProgress(current){
-  const pct = Math.min(100, Math.round((current / CONFIG.targetAmount) * 100));
-  document.getElementById('curAmt').textContent = formatWon(current);
-  document.getElementById('goalAmt').textContent = formatWon(CONFIG.targetAmount);
-  document.getElementById('barInner').style.width = pct + '%';
-  document.getElementById('pctText').textContent = `${pct}% 달성`;
-  renderCandles(pct);
-}
-renderProgress(CONFIG.currentAmount);
-  
   const target = new Date(CONFIG.birthday + 'T00:00:00');
   const today = new Date();
   today.setHours(0,0,0,0);
