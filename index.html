@@ -91,7 +91,51 @@
     display:inline-block;
   }
   .dday-sub{ text-align:center; font-size:12px; color:rgba(51,71,79,0.6); margin-top:6px; }
-
+/* ---- Achievement card ---- */
+  .card{
+    background:var(--plum-deep);
+    border:1px solid rgba(91,159,214,0.18);
+    box-shadow:0 12px 30px rgba(91,159,214,0.18);
+    border-radius:24px;
+    padding:32px 24px;
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute; top:-40%; right:-20%;
+    width:220px; height:220px;
+    background:radial-gradient(circle, rgba(95,207,192,0.18), transparent 70%);
+  }
+  .cake-svg{display:block; margin:0 auto 18px; width:100%; max-width:280px; height:auto;}
+  .flame{ transform-origin: center bottom; animation: flicker 1.6s ease-in-out infinite; }
+  .flame.off{ opacity:0.12; animation:none; }
+  @keyframes flicker{
+    0%,100%{ transform:scaleY(1) rotate(-1deg); }
+    50%{ transform:scaleY(1.12) rotate(1.5deg); }
+  }
+  .progress-text{ text-align:center; }
+  .progress-amount{
+    font-family:'Gaegu', sans-serif;
+    font-size:30px; font-weight:700; color:var(--gold);
+  }
+  .progress-amount span{ font-size:16px; color:rgba(51,71,79,0.55); font-family:'Noto Sans KR';}
+  .progress-bar-outer{
+    height:14px; border-radius:99px;
+    background:rgba(255,255,255,0.85);
+    margin:16px 0 6px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .progress-bar-inner{
+    height:100%; border-radius:99px;
+    background:linear-gradient(90deg, var(--pink), var(--gold));
+    width:0%;
+    transition: width 0.8s ease;
+  }
+  .progress-pct{ text-align:center; font-size:12px; color:rgba(51,71,79,0.55); }
+  .progress-note{ text-align:center; font-size:12px; color:rgba(51,71,79,0.5); margin-top:8px; }
   /* ---- Support methods ---- */
   h2{
     font-family:'Gaegu', sans-serif;
@@ -224,7 +268,22 @@
   <h1 id="mainTitle">602 맥북<br/>장만 <span class="accent">프로젝트</span></h1>
 
   <div class="countdown" id="countdown"></div>
-
+<div class="card">
+    <svg class="cake-svg" viewBox="0 0 280 200" id="cakeSvg">
+      <ellipse cx="140" cy="182" rx="110" ry="10" fill="rgba(51,71,79,0.12)"/>
+      <rect x="55" y="120" width="170" height="55" rx="10" fill="#5FCFC0"/>
+      <rect x="55" y="120" width="170" height="14" rx="7" fill="#FFFFFF" opacity="0.9"/>
+      <rect x="70" y="95" width="140" height="35" rx="9" fill="#5B9FD6"/>
+      <rect x="70" y="95" width="140" height="11" rx="5" fill="#FFFFFF" opacity="0.9"/>
+      <g id="candles"></g>
+    </svg>
+    <div class="progress-text">
+      <div class="progress-amount"><span id="curAmt">0</span>원 <span>/ <span id="goalAmt">0</span>원</span></div>
+    </div>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" id="barInner"></div></div>
+    <div class="progress-pct" id="pctText">0% 달성</div>
+    <div class="progress-note">계좌·카카오페이·토스 후원 + 현금 후원 합산 · 수동 업데이트</div>
+  </div>
   <div class="story" id="storyBlock">
     <div class="story-kicker">STORY</div>
     <p>안녕하세요! 생일자 602입니다 :)</p>
@@ -324,6 +383,9 @@
    ========================================================= */
 const CONFIG = {
   hostName: "602",                         // 주인공 이름
+  targetAmount: 2190000,                    // 목표 금액(원)
+  currentAmount: 1200000,                   // 지금까지 모인 금액(원) — 온라인 70만 + 현금 50만. 모일 때마다 이 숫자만 손으로 바꿔주세요
+  
   birthday: "2026-08-14",                   // 생일 날짜 — 상단 D-day 표시 기준
   bank: { name: "신한", account: "110546208263", holder: "지유경" },   // ⚠️ 깃허브에 올리기 전 실제 계좌 정보로 꼭 바꿔주세요
   kakaopayUrl: "https://qr.kakaopay.com/Ej8QsWy6X",
@@ -341,6 +403,35 @@ document.getElementById('footerNote').textContent = `${CONFIG.hostName}의 생�
 
 // countdown
 function renderCountdown(){
+  // achievement progress (manual number, edit CONFIG.currentAmount to update)
+function formatWon(n){ return Number(n).toLocaleString('ko-KR'); }
+
+function renderCandles(pct){
+  const g = document.getElementById('candles');
+  g.innerHTML = '';
+  const lit = Math.round((pct/100) * 5);
+  const startX = 90;
+  for(let i=0;i<5;i++){
+    const x = startX + i*22;
+    const isLit = i < lit;
+    g.innerHTML += `
+      <rect x="${x}" y="70" width="6" height="26" rx="2" fill="#FFFFFF"/>
+      <ellipse class="flame ${isLit ? '' : 'off'}" cx="${x+3}" cy="66" rx="5" ry="8" fill="${isLit ? '#5B9FD6' : '#B9CBD3'}"/>
+      <ellipse cx="${x+3}" cy="68" rx="2.4" ry="4" fill="${isLit ? '#5FCFC0' : 'transparent'}"/>
+    `;
+  }
+}
+
+function renderProgress(current){
+  const pct = Math.min(100, Math.round((current / CONFIG.targetAmount) * 100));
+  document.getElementById('curAmt').textContent = formatWon(current);
+  document.getElementById('goalAmt').textContent = formatWon(CONFIG.targetAmount);
+  document.getElementById('barInner').style.width = pct + '%';
+  document.getElementById('pctText').textContent = `${pct}% 달성`;
+  renderCandles(pct);
+}
+renderProgress(CONFIG.currentAmount);
+  
   const target = new Date(CONFIG.birthday + 'T00:00:00');
   const today = new Date();
   today.setHours(0,0,0,0);
