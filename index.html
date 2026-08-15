@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -390,7 +391,7 @@
 const CONFIG = {
   hostName: "602",                         // 주인공 이름
   targetAmount: 2190000,                    // 목표 금액(원)
-  currentAmount: 1300000,                   // 지금까지 모인 금액(원) — 온라인 70만 + 현금 50만. 모일 때마다 이 숫자만 손으로 바꿔주세요
+  currentAmount: 1370000,                   // 지금까지 모인 금액(원) — 온라인 70만 + 현금 50만. 모일 때마다 이 숫자만 손으로 바꿔주세요
   
   birthday: "2026-08-14",                   // 생일 날짜 — 상단 D-day 표시 기준
   bank: { name: "신한", account: "110546208263", holder: "지유경" },   // ⚠️ 깃허브에 올리기 전 실제 계좌 정보로 꼭 바꿔주세요
@@ -422,7 +423,7 @@ function renderCountdown(){
     sub = '생일 축하해요 🎂';
   } else {
     label = `D+${Math.abs(diffDays)}`;
-    sub = '생일 지남';
+    sub = '덕분에 맥북과 가까워진 지';
   }
   el.innerHTML = `<div class="dday-badge">${label}</div><div class="dday-sub">${sub}</div>`;
 }
